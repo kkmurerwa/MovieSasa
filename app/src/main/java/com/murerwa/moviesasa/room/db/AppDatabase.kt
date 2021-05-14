@@ -1,4 +1,4 @@
-package bajeti.susac.co.ke.room.db
+package com.murerwa.moviesasa.room.db
 
 import android.content.Context
 import androidx.room.Database
@@ -8,7 +8,7 @@ import bajeti.susac.co.ke.room.dao.MovieDao
 import com.murerwa.moviesasa.models.Movie
 
 
-@Database(entities = [Movie::class], version = 2010, exportSchema = false)
+@Database(entities = [Movie::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val movieDao: MovieDao
@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         AppDatabase::class.java,
-                        "movie_database")
+                        "app_database")
                         .fallbackToDestructiveMigration()
                         .build()
                     INSTANCE = instance

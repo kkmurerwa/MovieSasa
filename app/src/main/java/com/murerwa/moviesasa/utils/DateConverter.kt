@@ -1,4 +1,4 @@
-package bajeti.susac.co.ke.utils
+package com.murerwa.moviesasa.utils
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
