@@ -11,17 +11,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.murerwa.moviesasa.R
-import com.murerwa.moviesasa.utils.ioThread
-import com.murerwa.moviesasa.room.db.AppDatabase
 import com.murerwa.moviesasa.adapters.MovieAdapter
-import com.murerwa.moviesasa.databinding.FragmentFirstBinding
+import com.murerwa.moviesasa.databinding.FragmentMovieListBinding
 import com.murerwa.moviesasa.models.Movie
-import com.murerwa.moviesasa.utils.toast
 import com.murerwa.moviesasa.viewmodels.MovieListFragmentVM
 
 class MovieList : Fragment() {
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentMovieListBinding? = null
 
     private val binding get() = _binding!!
 
@@ -35,7 +31,7 @@ class MovieList : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentMovieListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
