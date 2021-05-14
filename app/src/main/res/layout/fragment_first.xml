@@ -6,9 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".fragments.MovieList">
 
+    <!-- Import custom toolbar -->
     <include
         android:id="@+id/main_toolbar"
-        layout="@layout/toolbar"
+        layout="@layout/toolbar_searchable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
