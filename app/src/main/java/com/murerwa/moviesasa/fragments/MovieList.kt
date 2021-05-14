@@ -43,10 +43,11 @@ class MovieList : Fragment() {
         movieAdapter = MovieAdapter{ movie: Movie -> navigateToSingleView(movie)}
 
         val toolbar = binding.mainToolbar.root
-        toolbar.title = "Home"
 
         rvMovieList = binding.rvAllShows
         rvMovieList.layoutManager = LinearLayoutManager(context)
+
+        /* Comment out the code below to insert test data to the db */
 
 //        val movieList: MutableList<Movie> = ArrayList()
 //
