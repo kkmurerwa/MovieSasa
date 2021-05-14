@@ -1,4 +1,4 @@
-package bajeti.susac.co.ke.room.dao
+package com.murerwa.moviesasa.room.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
@@ -6,7 +6,7 @@ import com.murerwa.moviesasa.models.Movie
 
 @Dao
 interface MovieDao {
-    @Query("SELECT * FROM movies_table ORDER BY id DESC")
+    @Query("SELECT * FROM movies_table ORDER BY id ASC")
     fun getAllDbMovies(): LiveData<List<Movie>>
 
     @Query("SELECT * FROM movies_table WHERE id = :passedId")

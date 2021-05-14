@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import bajeti.susac.co.ke.room.dao.MovieDao
+import com.murerwa.moviesasa.room.dao.MovieDao
 import com.murerwa.moviesasa.models.Movie
 
 

@@ -2,7 +2,10 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
 }
+
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 30
@@ -35,6 +38,13 @@ android {
         viewBinding true
     }
 }
+//sourceSets {
+//    main {
+//        java {
+//            srcDirs += 'build/generated/source/navigation-args'
+//        }
+//    }
+//}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

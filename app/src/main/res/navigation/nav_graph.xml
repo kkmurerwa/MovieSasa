@@ -3,25 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/MovieListFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/MovieListFragment"
         android:name="com.murerwa.moviesasa.fragments.MovieList"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_MovieListFragment_to_MovieViewFragment"
+            app:destination="@id/MovieViewFragment" >
+            <argument
+                android:name="movie"
+                app:argType="com.murerwa.moviesasa.models.Movie"
+                app:nullable="true" />
+        </action>
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
+        android:id="@+id/MovieViewFragment"
         android:name="com.murerwa.moviesasa.fragments.SingleMovieView"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+        tools:layout="@layout/fragment_second" >
+        <argument
+            android:name="movie"
+            app:argType="com.murerwa.moviesasa.models.Movie"
+            app:nullable="true" />
     </fragment>
 </navigation>

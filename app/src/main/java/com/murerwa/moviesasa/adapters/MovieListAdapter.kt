@@ -11,15 +11,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.murerwa.moviesasa.R
 import com.murerwa.moviesasa.databinding.ListItemMovieBinding
 import com.murerwa.moviesasa.models.Movie
+import com.murerwa.moviesasa.utils.toast
 
-class MovieAdapter : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
-
+class MovieAdapter(private val movieCardClicked: (Movie) -> Unit)
+        : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
     private val movieList: ArrayList<Movie> = arrayListOf()
 
     private lateinit var context: Context
-
-
-    // Setting new list, avoid passing list as constructor
     fun setList(newList: ArrayList<Movie>) {
         movieList.clear()
         movieList.addAll(newList)
@@ -36,19 +34,22 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
     ): ViewHolder {
         val inflatedView =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_movie, parent, false)
-        return ViewHolder(inflatedView)
+        return ViewHolder(inflatedView,  movieCardClicked)
     }
 
     override fun getItemCount() = movieList.size
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val Movie = movieList[position]
-        holder.bindMovie(Movie, position, movieList, context)
+        val currentMovie = movieList[position]
+        holder.bindMovie(currentMovie, position, movieList)
     }
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    class ViewHolder(v: View, private val movieItemClicked: (Movie) -> Unit)
+        : RecyclerView.ViewHolder(v), View.OnClickListener {
         private var view: View = v
+
+        private lateinit var currentMovie: Movie
 
         private var _binding: ListItemMovieBinding? = null
 
@@ -60,22 +61,24 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
         }
 
         override fun onClick(v: View) {
-            // Do stuff when card clicked
+            // navigate to next item when clicked
+            movieItemClicked.invoke(currentMovie)
         }
 
-        fun bindMovie(movieItem: Movie, position: Int, movieList: List<Movie>, context: Context) {
+        fun bindMovie(movieItem: Movie, position: Int, movieList: List<Movie>) {
+            this.currentMovie = movieItem
+
             binding.tvMovieTitle.text = movieItem.title
             binding.tvMovieDesc.text = movieItem.description
             binding.tvMovieAddInfo.text = movieItem.rating.toString()
 
-            val progressDrawable = CircularProgressDrawable(context)
+            val progressDrawable = CircularProgressDrawable(binding.root.context)
             progressDrawable.strokeWidth = 5f
             progressDrawable.centerRadius = 30f
             progressDrawable.start()
 
             Glide.with(itemView)
                 .load(movieItem.coverUrl)
-                .centerCrop()
                 .placeholder(progressDrawable)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.ic_no_movie)

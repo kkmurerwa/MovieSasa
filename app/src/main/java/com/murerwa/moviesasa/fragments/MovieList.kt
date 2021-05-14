@@ -5,15 +5,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.UiThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.murerwa.moviesasa.R
 import com.murerwa.moviesasa.utils.ioThread
 import com.murerwa.moviesasa.room.db.AppDatabase
 import com.murerwa.moviesasa.adapters.MovieAdapter
 import com.murerwa.moviesasa.databinding.FragmentFirstBinding
 import com.murerwa.moviesasa.models.Movie
+import com.murerwa.moviesasa.utils.toast
 import com.murerwa.moviesasa.viewmodels.MovieListFragmentVM
 
 class MovieList : Fragment() {
@@ -25,7 +29,7 @@ class MovieList : Fragment() {
 
     private lateinit var viewModel: MovieListFragmentVM
 
-    private val movieAdapter = MovieAdapter()
+    private lateinit var movieAdapter: MovieAdapter
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +44,8 @@ class MovieList : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(MovieListFragmentVM::class.java)
 
+        movieAdapter = MovieAdapter{ movie: Movie -> navigateToSingleView(movie)}
+
         val toolbar = binding.mainToolbar.root
         toolbar.title = "Home"
 
@@ -47,26 +53,21 @@ class MovieList : Fragment() {
         rvMovieList.layoutManager = LinearLayoutManager(context)
 
 //        val movieList: MutableList<Movie> = ArrayList()
-//        for (i in 0..10) {
+//
+//        for (i: Int in 0..5) {
 //            val movie = Movie(
-//                title = "Title $i",
+//                title = "Movie $i",
 //                description = "Desc $i",
-//                coverUrl = "https://i.pinimg.com/originals/1a/4d/23/1a4d2318d4a3186e0e1b7659355f88f2.jpg",
+//                coverUrl = "https://1.bp.blogspot.com/-LtwS1ngzciI/W-X54-7ufkI/AAAAAAAAEDw/YClythlEPW8t-qTvgkGZihWIzIn3yUVhACK4BGAYYCw/s1600/universalpictures.jpg",
 //                rating = i
 //            )
 //
-//            Log.d("Array Size", movie.title)
-//
 //            movieList.add(movie)
 //        }
-
-//        ioThread {
-//            val viewModel = ViewModelProvider(requireActivity()).get(MovieListFragmentVM::class.java)
 //
+//        ioThread {
 //            viewModel.insertAllMovies(movieList)
 //        }
-
-//        Log.d("Array Size", movieList.size.toString())
 
         observeDb()
     }
@@ -79,6 +80,14 @@ class MovieList : Fragment() {
 
             rvMovieList.adapter = movieAdapter
         })
+    }
+
+    private fun navigateToSingleView (movie: Movie) {
+        // Navigate with safe-args
+        val action = MovieListDirections.actionMovieListFragmentToMovieViewFragment(movie)
+
+        // Perform navigation action
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {
