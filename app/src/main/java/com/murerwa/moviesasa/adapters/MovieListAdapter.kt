@@ -69,8 +69,8 @@ class MovieAdapter(private val movieCardClicked: (Movie) -> Unit)
             this.currentMovie = movieItem
 
             binding.tvMovieTitle.text = movieItem.title
-            binding.tvMovieDesc.text = movieItem.description
-            binding.tvMovieAddInfo.text = movieItem.rating.toString()
+            binding.tvMovieDesc.text = movieItem.overview
+            binding.tvMovieAddInfo.text = movieItem.vote_average.toString()
 
             val progressDrawable = CircularProgressDrawable(binding.root.context)
             progressDrawable.strokeWidth = 5f
@@ -78,7 +78,7 @@ class MovieAdapter(private val movieCardClicked: (Movie) -> Unit)
             progressDrawable.start()
 
             Glide.with(itemView)
-                .load(movieItem.coverUrl)
+                .load("https://image.tmdb.org/t/p/w500/${movieItem.poster_path}")
                 .placeholder(progressDrawable)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .error(R.drawable.ic_no_movie)

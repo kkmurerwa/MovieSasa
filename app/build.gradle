@@ -68,4 +68,13 @@ dependencies {
     implementation "androidx.room:room-ktx:2.3.0"
     kapt "androidx.room:room-compiler:2.3.0"
     androidTestImplementation "androidx.room:room-testing:2.3.0"
+
+    // Kotlin Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
+
+    // Retrofit
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 }

@@ -8,7 +8,7 @@ import com.murerwa.moviesasa.room.dao.MovieDao
 import com.murerwa.moviesasa.models.Movie
 
 
-@Database(entities = [Movie::class], version = 1, exportSchema = false)
+@Database(entities = [Movie::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val movieDao: MovieDao

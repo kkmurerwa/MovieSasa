@@ -1,15 +1,20 @@
 package com.murerwa.moviesasa
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import com.murerwa.moviesasa.databinding.ActivityMainBinding
+import com.murerwa.moviesasa.retrofit.ApiResponse
+import com.murerwa.moviesasa.retrofit.ApiRequests
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.awaitResponse
+import retrofit2.converter.gson.GsonConverterFactory
+
+const val BASE_URL = "https://api.themoviedb.org"
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +27,24 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        getCurrentData()
+    }
+
+    private fun getCurrentData() {
+        val api: ApiRequests? = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiRequests::class.java)
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val response: Response<ApiResponse> = api!!.getFeaturedMovies().awaitResponse()
+
+            if (response.isSuccessful) {
+                val data = response.body()!!
+                Log.d("DATA", data.toString())
+            }
+
+        }
     }
 }
