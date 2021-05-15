@@ -3,6 +3,8 @@ package com.murerwa.moviesasa.retrofit
 import retrofit2.Call
 import retrofit2.http.GET
 
+
+const val BASE_URL = "https://api.themoviedb.org"
 const val API_KEY = "eb16e8a46409e5e4644e1f1a6b7be4f7"
 
 interface ApiRequests {

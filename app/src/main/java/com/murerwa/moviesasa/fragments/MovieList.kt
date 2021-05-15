@@ -72,10 +72,12 @@ class MovieList : Fragment() {
     private fun observeDb() {
         // Use an observer to monitor the db and reflect changes on adapter from the view model
         viewModel.getMovieList().observe(viewLifecycleOwner, { movieList ->
-            movieAdapter.setList(movieList as ArrayList<Movie>)
-            context?.let {context -> movieAdapter.setContext(context) }
+            if (movieList != null) {
+                movieAdapter.setList(movieList as ArrayList<Movie>)
+                context?.let {context -> movieAdapter.setContext(context) }
 
-            rvMovieList.adapter = movieAdapter
+                rvMovieList.adapter = movieAdapter
+            }
         })
     }
 

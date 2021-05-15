@@ -12,6 +12,9 @@ interface MovieDao {
     @Query("SELECT * FROM movies_table WHERE id = :passedId")
     fun getMovie(passedId: Int): Movie
 
+    @Query("SELECT COUNT(*) FROM movies_table")
+    fun getDbCount(): Int
+
     @Insert
     fun insertMovie(movie: Movie)
 

@@ -14,8 +14,6 @@ import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 
-const val BASE_URL = "https://api.themoviedb.org"
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -26,25 +24,5 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
-
-        getCurrentData()
-    }
-
-    private fun getCurrentData() {
-        val api: ApiRequests? = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiRequests::class.java)
-
-        GlobalScope.launch(Dispatchers.IO) {
-            val response: Response<ApiResponse> = api!!.getFeaturedMovies().awaitResponse()
-
-            if (response.isSuccessful) {
-                val data = response.body()!!
-                Log.d("DATA", data.toString())
-            }
-
-        }
     }
 }
