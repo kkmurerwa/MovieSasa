@@ -70,7 +70,7 @@ class MovieAdapter(private val movieCardClicked: (Movie) -> Unit)
 
             binding.tvMovieTitle.text = movieItem.title
             binding.tvMovieDesc.text = movieItem.overview
-            binding.tvMovieAddInfo.text = movieItem.vote_average.toString()
+            binding.rbMovieRating.rating = movieItem.vote_average.toFloat()
 
             val progressDrawable = CircularProgressDrawable(binding.root.context)
             progressDrawable.strokeWidth = 5f

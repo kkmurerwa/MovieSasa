@@ -47,25 +47,6 @@ class MovieList : Fragment() {
         rvMovieList = binding.rvAllShows
         rvMovieList.layoutManager = LinearLayoutManager(context)
 
-        /* Comment out the code below to insert test data to the db */
-
-//        val movieList: MutableList<Movie> = ArrayList()
-//
-//        for (i: Int in 0..5) {
-//            val movie = Movie(
-//                title = "Movie $i",
-//                description = "Desc $i",
-//                coverUrl = "https://1.bp.blogspot.com/-LtwS1ngzciI/W-X54-7ufkI/AAAAAAAAEDw/YClythlEPW8t-qTvgkGZihWIzIn3yUVhACK4BGAYYCw/s1600/universalpictures.jpg",
-//                rating = i
-//            )
-//
-//            movieList.add(movie)
-//        }
-//
-//        ioThread {
-//            viewModel.insertAllMovies(movieList)
-//        }
-
         observeDb()
     }
 
