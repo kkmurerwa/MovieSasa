@@ -46,7 +46,7 @@ class SingleMovieView : Fragment() {
         Glide.with(requireContext())
             .load("https://image.tmdb.org/t/p/w500/${movie.poster_path}")
             .placeholder(progressDrawable)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .error(R.drawable.ic_no_movie)
             .fallback(R.drawable.ic_no_movie)
             .into(binding.imvFullImage)

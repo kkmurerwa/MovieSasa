@@ -19,12 +19,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 const val BASE_URL = "https://api.themoviedb.org"
 
-class AppRepository(private val context: Context) {
+class AppRepository(context: Context) {
     private val db: AppDatabase = AppDatabase.getInstance(context)
 
-    private var movieList = MutableLiveData<List<Movie>>()
-
     fun getAllMovies(): LiveData<List<Movie>> {
+        // Check if db is empty on background thread
         GlobalScope.launch(Dispatchers.IO) {
             if (db.movieDao.getDbCount() == 0) {
                 loadMoviesFromApi()
@@ -55,9 +54,10 @@ class AppRepository(private val context: Context) {
                 Log.d("DATA", data.toString())
 
                 insertAllMovies(data.moviesLists)
-                withContext(Dispatchers.Main) {
-                    return@withContext db.movieDao.getAllDbMovies()
-                }
+
+//                withContext(Dispatchers.Main) {
+//                    return@withContext db.movieDao.getAllDbMovies()
+//                }
             }
         }
     }
