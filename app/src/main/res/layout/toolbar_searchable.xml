@@ -7,34 +7,58 @@
     android:background="?attr/colorPrimary"
     android:paddingRight="12dp"
     android:paddingEnd="12dp"
+    android:paddingTop="35dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:background="@drawable/bg_rounded_search"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp">
 
-        <EditText
+        <ImageButton
+            android:id="@+id/imb_display_drawer"
+            android:layout_width="45dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:padding="5dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_action_menu" />
+
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/searchView"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:drawableLeft="@drawable/ic_action_menu"
-            android:drawablePadding="10dp"
+            android:background="@drawable/bg_rounded_search"
             android:drawableTint="?attr/colorOnPrimary"
             android:gravity="center_vertical"
-            android:background="@drawable/bg_rounded_search"
             android:hint="Search Movie"
             android:inputType="text"
             android:maxLines="1"
-            android:padding="10dp"
+            android:paddingStart="10dp"
             android:scrollHorizontally="true"
             android:textColor="?attr/colorOnPrimary"
             android:textColorHint="?attr/colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imb_display_drawer"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/imb_clear_text"
+            android:layout_width="45dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="@+id/searchView"
+            app:layout_constraintEnd_toEndOf="@+id/searchView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
