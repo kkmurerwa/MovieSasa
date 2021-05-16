@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.PagingSource
 import com.murerwa.moviesasa.models.Cast
 import com.murerwa.moviesasa.models.Genre
 import com.murerwa.moviesasa.models.Movie
@@ -31,7 +32,7 @@ class AppRepository(context: Context) {
         // Check if db is empty on background thread
         GlobalScope.launch(Dispatchers.IO) {
             if (db.movieDao.getDbCount() == 0) {
-                loadMoviesFromApi()
+                loadMoviesFromApi(1)
             }
         }
 
@@ -49,8 +50,23 @@ class AppRepository(context: Context) {
         return db.genreDao.getAllMovieGenres()
     }
 
-    fun getGenre(id: Int): LiveData<Genre> {
-        return db.genreDao.getGenre(id)
+    fun loadMoviesFromApi(page: Int) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val api: ApiRequests? = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(ApiRequests::class.java)
+
+            val responseMovies: Response<MoviesApiResponse> = api!!.getFeaturedMovies(page).awaitResponse()
+
+            if (responseMovies.isSuccessful) {
+                val data = responseMovies.body()!!
+                Log.d("DATA", data.toString())
+
+                insertAllMovies(data.moviesLists)
+            }
+        }
     }
 
     fun insertAllMovies(movieList: List<Movie>) {
@@ -59,28 +75,13 @@ class AppRepository(context: Context) {
         }
     }
 
+    fun getGenre(id: Int): LiveData<Genre> {
+        return db.genreDao.getGenre(id)
+    }
+
     fun insertAllGenres(genreList: List<Genre>) {
         genreList.forEach {
             db.genreDao.insertGenre(it)
-        }
-    }
-
-    private fun loadMoviesFromApi() {
-        GlobalScope.launch(Dispatchers.IO) {
-            val api: ApiRequests? = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(ApiRequests::class.java)
-
-            val responseMovies: Response<MoviesApiResponse> = api!!.getFeaturedMovies().awaitResponse()
-
-            if (responseMovies.isSuccessful) {
-                val data = responseMovies.body()!!
-                Log.d("DATA", data.toString())
-
-                insertAllMovies(data.moviesLists)
-            }
         }
     }
 
