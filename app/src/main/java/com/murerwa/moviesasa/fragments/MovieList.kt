@@ -42,7 +42,7 @@ class MovieList : Fragment() {
 
     private var _isLoadingMovies = false
 
-    private lateinit var mMovieList: MutableList<Movie>
+    private var mMovieList: MutableList<Movie> = ArrayList()
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,

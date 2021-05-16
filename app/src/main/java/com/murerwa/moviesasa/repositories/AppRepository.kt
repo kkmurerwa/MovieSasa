@@ -32,7 +32,7 @@ class AppRepository(context: Context) {
         // Check if db is empty on background thread
         GlobalScope.launch(Dispatchers.IO) {
             if (db.movieDao.getDbCount() == 0) {
-                loadMoviesFromApi(1)
+                loadMoviesFromApi()
             }
         }
 
@@ -50,7 +50,7 @@ class AppRepository(context: Context) {
         return db.genreDao.getAllMovieGenres()
     }
 
-    fun loadMoviesFromApi(page: Int) {
+    fun loadMoviesFromApi() {
         GlobalScope.launch(Dispatchers.IO) {
             val api: ApiRequests? = Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -58,7 +58,7 @@ class AppRepository(context: Context) {
                 .build()
                 .create(ApiRequests::class.java)
 
-            val responseMovies: Response<MoviesApiResponse> = api!!.getFeaturedMovies(page).awaitResponse()
+            val responseMovies: Response<MoviesApiResponse> = api!!.getFeaturedMovies().awaitResponse()
 
             if (responseMovies.isSuccessful) {
                 val data = responseMovies.body()!!

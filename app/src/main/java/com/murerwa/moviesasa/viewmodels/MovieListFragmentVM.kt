@@ -14,7 +14,7 @@ class MovieListFragmentVM(application: Application) : AndroidViewModel(applicati
     }
 
     fun loadMoreMovies () = viewModelScope.launch {
-        AppRepository(getApplication()).loadMoviesFromApi(2)
+        AppRepository(getApplication()).loadMoviesFromApi()
     }
 
     fun insertAllMovies(movieList: List<Movie>) {
