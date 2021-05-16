@@ -11,7 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.murerwa.moviesasa.R
 import com.murerwa.moviesasa.databinding.ListItemMovieBinding
 import com.murerwa.moviesasa.models.Movie
-import com.murerwa.moviesasa.utils.toast
+import com.murerwa.moviesasa.utils.Config
 
 class MovieAdapter(private val movieCardClicked: (Movie) -> Unit)
         : RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
@@ -70,7 +70,7 @@ class MovieAdapter(private val movieCardClicked: (Movie) -> Unit)
 
             binding.tvMovieTitle.text = movieItem.title
             binding.tvMovieDesc.text = movieItem.overview
-            binding.rbMovieRating.rating = movieItem.vote_average.toFloat()
+            binding.rbMovieRating.rating = Config().ratingConverter(movieItem.vote_average)
 
             val progressDrawable = CircularProgressDrawable(binding.root.context)
             progressDrawable.strokeWidth = 5f

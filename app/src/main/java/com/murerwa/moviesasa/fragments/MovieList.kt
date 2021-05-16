@@ -1,16 +1,15 @@
 package com.murerwa.moviesasa.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.UiThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.murerwa.moviesasa.adapters.CastListAdapter
 import com.murerwa.moviesasa.adapters.MovieAdapter
 import com.murerwa.moviesasa.databinding.FragmentMovieListBinding
 import com.murerwa.moviesasa.models.Movie

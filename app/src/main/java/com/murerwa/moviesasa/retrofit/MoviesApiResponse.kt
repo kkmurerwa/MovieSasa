@@ -3,7 +3,7 @@ package com.murerwa.moviesasa.retrofit
 import com.google.gson.annotations.SerializedName
 import com.murerwa.moviesasa.models.Movie
 
-data class ApiResponse(
+data class MoviesApiResponse(
     val page: Int,
     @SerializedName("results")
     val moviesLists: List<Movie>,
