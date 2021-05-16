@@ -13,12 +13,12 @@
         android:background="?attr/colorPrimary"
         tools:context=".fragments.SingleMovieView">
 
-        <!--    <include-->
-        <!--        android:id="@+id/main_toolbar"-->
-        <!--        layout="@layout/toolbar"-->
-        <!--        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--        app:layout_constraintStart_toStartOf="parent"-->
-        <!--        app:layout_constraintTop_toTopOf="parent" />-->
+        <include
+            android:id="@+id/main_toolbar"
+            layout="@layout/toolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imv_full_image"

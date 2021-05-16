@@ -43,11 +43,11 @@ class SingleMovieView : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(SingleMovieFragmentVM::class.java)
 
-//        val toolbar = binding.mainToolbar.root
-//        toolbar.title = movie.title
-//        toolbar.setNavigationOnClickListener {
-//            findNavController().navigateUp()
-//        }
+        val toolbar = binding.mainToolbar.root
+        toolbar.title = movie.title
+        toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
 
         // Progress loader for glide
         val progressDrawable = CircularProgressDrawable(binding.root.context)
