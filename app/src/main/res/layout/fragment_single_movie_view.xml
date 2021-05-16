@@ -23,12 +23,31 @@
         <ImageView
             android:id="@+id/imv_full_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="400dp"
-            android:scaleType="fitXY"
+            android:layout_height="500dp"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/ll_chip_group_parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imv_full_image">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cg_film_genres"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rb_movie_rating">
+            </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_full_movie_title"
@@ -75,6 +94,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_full_movie_desc" />
 
+        <TextView
+            android:id="@+id/tv_rating_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text=""
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_movie_rating_label" />
+
         <RatingBar
             android:id="@+id/rb_movie_rating"
             style="?android:attr/ratingBarStyleSmall"
@@ -82,34 +111,39 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:isIndicator="true"
-            android:numStars="10"
-            android:rating="7.3"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
+            android:numStars="5"
+            android:scaleX="1.8"
+            android:scaleY="1.8"
             android:stepSize="0.1"
             app:layout_constraintEnd_toEndOf="@+id/tv_full_movie_title"
             app:layout_constraintStart_toStartOf="@+id/tv_full_movie_title"
-            app:layout_constraintTop_toBottomOf="@+id/tv_movie_rating_label" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_rating_value" />
 
-        <LinearLayout
-            android:id="@+id/ll_chip_group_parent"
+        <TextView
+            android:id="@+id/tv_casting_list_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:text="Film Cast"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rb_movie_rating" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_cast_members"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:gravity="center"
+            android:background="?attr/colorPrimary"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imv_full_image">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/cg_film_genres"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rb_movie_rating">
-            </com.google.android.material.chip.ChipGroup>
-        </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/tv_casting_list_label" />
 
         <LinearLayout
             android:id="@+id/btn_back"
@@ -125,7 +159,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rb_movie_rating">
+            app:layout_constraintTop_toBottomOf="@+id/rv_cast_members">
 
             <ImageView
                 android:id="@+id/imageView"
