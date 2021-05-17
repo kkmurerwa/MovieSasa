@@ -4,17 +4,18 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.paging.PagingSource
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.murerwa.moviesasa.models.Cast
 import com.murerwa.moviesasa.models.Genre
 import com.murerwa.moviesasa.models.Movie
-import com.murerwa.moviesasa.retrofit.ApiRequests
-import com.murerwa.moviesasa.retrofit.CastApiResponse
-import com.murerwa.moviesasa.retrofit.GenreListResponse
-import com.murerwa.moviesasa.retrofit.MoviesApiResponse
+import com.murerwa.moviesasa.retrofit.*
 import com.murerwa.moviesasa.room.db.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -24,19 +25,26 @@ import retrofit2.converter.gson.GsonConverterFactory
 const val BASE_URL = "https://api.themoviedb.org"
 
 class AppRepository(context: Context) {
+    private val apiService = ApiClient.getClient().create(ApiService::class.java)
+
+    private val appDatabase = AppDatabase.getInstance(context)
+
     private val db: AppDatabase = AppDatabase.getInstance(context)
 
-    private val _movieList:MutableLiveData<List<Cast>> = MutableLiveData<List<Cast>>()
+    private val _movieList: MutableLiveData<List<Cast>> = MutableLiveData<List<Cast>>()
 
-    fun getAllMovies(): LiveData<List<Movie>> {
-        // Check if db is empty on background thread
-        GlobalScope.launch(Dispatchers.IO) {
-            if (db.movieDao.getDbCount() == 0) {
-                loadMoviesFromApi()
-            }
-        }
 
-        return db.movieDao.getAllDbMovies()
+    @OptIn(ExperimentalPagingApi::class)
+    fun fetchPosts(): Flow<PagingData<Movie>> {
+        return Pager(
+            PagingConfig(
+                pageSize = 40,
+                enablePlaceholders = false,
+                prefetchDistance = 3),
+            remoteMediator = ApiRemoteMediator(apiService, appDatabase),
+
+            pagingSourceFactory = { appDatabase.movieDao.getPosts() }
+        ).flow
     }
 
     fun getAllMovieGenres(): LiveData<List<Genre>> {
@@ -50,36 +58,7 @@ class AppRepository(context: Context) {
         return db.genreDao.getAllMovieGenres()
     }
 
-    fun loadMoviesFromApi() {
-        GlobalScope.launch(Dispatchers.IO) {
-            val api: ApiRequests? = Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(ApiRequests::class.java)
-
-            val responseMovies: Response<MoviesApiResponse> = api!!.getFeaturedMovies().awaitResponse()
-
-            if (responseMovies.isSuccessful) {
-                val data = responseMovies.body()!!
-                Log.d("DATA", data.toString())
-
-                insertAllMovies(data.moviesLists)
-            }
-        }
-    }
-
-    fun insertAllMovies(movieList: List<Movie>) {
-        movieList.forEach {
-            db.movieDao.insertMovie(it)
-        }
-    }
-
-    fun getGenre(id: Int): LiveData<Genre> {
-        return db.genreDao.getGenre(id)
-    }
-
-    fun insertAllGenres(genreList: List<Genre>) {
+    private fun insertAllGenres(genreList: List<Genre>) {
         genreList.forEach {
             db.genreDao.insertGenre(it)
         }
@@ -127,4 +106,5 @@ class AppRepository(context: Context) {
             }
         }
     }
+
 }

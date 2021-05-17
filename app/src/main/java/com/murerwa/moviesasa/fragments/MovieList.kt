@@ -3,26 +3,25 @@ package com.murerwa.moviesasa.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.Button
 import android.widget.ImageButton
-import android.widget.SearchView
-import android.widget.TextView
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
-import com.murerwa.moviesasa.adapters.MovieAdapter
+import com.murerwa.moviesasa.adapters.MovieListAdapter
 import com.murerwa.moviesasa.databinding.FragmentMovieListBinding
 import com.murerwa.moviesasa.models.Movie
 import com.murerwa.moviesasa.utils.hideSoftKeyboard
 import com.murerwa.moviesasa.viewmodels.MovieListFragmentVM
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MovieList : Fragment() {
     private var _binding: FragmentMovieListBinding? = null
@@ -33,16 +32,18 @@ class MovieList : Fragment() {
 
     private lateinit var viewModel: MovieListFragmentVM
 
-    private lateinit var movieAdapter: MovieAdapter
-
     private lateinit var searchView: TextInputEditText
 
     private lateinit var btnClearSearchText: ImageButton
     private lateinit var btnOpenDrawerMenu: ImageButton
 
-    private var _isLoadingMovies = false
-
     private var mMovieList: MutableList<Movie> = ArrayList()
+
+    private lateinit var movieListAdapter: MovieListAdapter
+
+    private val movieListFragmentVM: MovieListFragmentVM by lazy {
+        ViewModelProvider(this).get(MovieListFragmentVM::class.java)
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +58,7 @@ class MovieList : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(MovieListFragmentVM::class.java)
 
-        movieAdapter = MovieAdapter{ movie: Movie -> navigateToSingleView(movie)}
+        movieListAdapter = MovieListAdapter { movie: Movie -> navigateToSingleView(movie)}
 
         searchView = binding.mainToolbar.searchView
         btnClearSearchText = binding.mainToolbar.imbClearText
@@ -81,9 +82,13 @@ class MovieList : Fragment() {
             }
         })
 
-        observeDb()
+        setupViews()
 
-        setUpSearch()
+        fetchPosts()
+
+//        observeDb()
+
+//        setUpSearch()
     }
 
     private fun setUpSearch() {
@@ -106,15 +111,15 @@ class MovieList : Fragment() {
                         }
                     }
 
-                    movieAdapter.setList(tempMutableList as ArrayList<Movie>)
-
-                    movieAdapter.notifyDataSetChanged()
+//                    movieAdapter.setList(tempMutableList as ArrayList<Movie>)
+//
+//                    movieAdapter.notifyDataSetChanged()
                 } else {
                     binding.mainToolbar.imbClearText.visibility = View.GONE
 
-                    movieAdapter.setList(mMovieList as ArrayList<Movie>)
-
-                    movieAdapter.notifyDataSetChanged()
+//                    movieAdapter.setList(mMovieList as ArrayList<Movie>)
+//
+//                    movieAdapter.notifyDataSetChanged()
                 }
             }
         })
@@ -144,20 +149,6 @@ class MovieList : Fragment() {
 //        })
     }
 
-    private fun observeDb() {
-        // Use an observer to monitor the db and reflect changes on adapter from the view model
-        viewModel.getMovieList().observe(viewLifecycleOwner, { movieList ->
-            if (movieList != null) {
-                mMovieList = movieList as ArrayList<Movie>
-
-                movieAdapter.setList(mMovieList as ArrayList<Movie>)
-                context?.let {context -> movieAdapter.setContext(context) }
-
-                rvMovieList.adapter = movieAdapter
-            }
-        })
-    }
-
     private fun navigateToSingleView (movie: Movie) {
         // Navigate with safe-args
         val action = MovieListDirections.actionMovieListFragmentToMovieViewFragment(movie)
@@ -170,6 +161,20 @@ class MovieList : Fragment() {
     private fun removeFocus() {
         hideSoftKeyboard()
         binding.mainToolbar.searchView.clearFocus()
+    }
+
+    private fun setupViews() {
+        rvMovieList.adapter = movieListAdapter
+    }
+
+    private fun fetchPosts() {
+        lifecycleScope.launch {
+            movieListFragmentVM.fetchPosts().collectLatest { pagingData ->
+
+                Log.d("PAGING", pagingData.toString())
+                movieListAdapter.submitData(pagingData)
+            }
+        }
     }
 
     override fun onDestroyView() {

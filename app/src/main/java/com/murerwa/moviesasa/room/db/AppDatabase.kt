@@ -5,16 +5,23 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.murerwa.moviesasa.models.Genre
-import com.murerwa.moviesasa.room.dao.MovieDao
 import com.murerwa.moviesasa.models.Movie
+import com.murerwa.moviesasa.models.ApiKeys
+import com.murerwa.moviesasa.room.dao.ApiKeysDao
 import com.murerwa.moviesasa.room.dao.GenreDao
+import com.murerwa.moviesasa.room.dao.MovieDao
 
 
-@Database(entities = [Movie::class, Genre::class], version = 1, exportSchema = false)
+@Database(
+    entities = [Movie::class, Genre::class, ApiKeys::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val movieDao: MovieDao
     abstract val genreDao: GenreDao
+    abstract val apiKeysDao: ApiKeysDao
 
     companion object {
         @Volatile

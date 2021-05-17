@@ -1,23 +1,18 @@
 package com.murerwa.moviesasa.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.murerwa.moviesasa.models.Movie
 import com.murerwa.moviesasa.repositories.AppRepository
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 
 class MovieListFragmentVM(application: Application) : AndroidViewModel(application) {
-    private val _currentPage: MutableLiveData<Int> = MutableLiveData<Int>(1)
+    private val movieRepo = AppRepository(application)
 
-    fun getMovieList () : LiveData<List<Movie>> {
-        return AppRepository(getApplication()).getAllMovies()
-    }
-
-    fun loadMoreMovies () = viewModelScope.launch {
-        AppRepository(getApplication()).loadMoviesFromApi()
-    }
-
-    fun insertAllMovies(movieList: List<Movie>) {
-        AppRepository(getApplication()).insertAllMovies(movieList)
+    fun fetchPosts(): Flow<PagingData<Movie>> {
+        return movieRepo.fetchPosts().cachedIn(viewModelScope)
     }
 }

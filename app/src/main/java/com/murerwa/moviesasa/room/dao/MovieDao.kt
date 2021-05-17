@@ -1,16 +1,18 @@
 package com.murerwa.moviesasa.room.dao
 
-import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
+import androidx.room.OnConflictStrategy.REPLACE
 import com.murerwa.moviesasa.models.Movie
 
 @Dao
 interface MovieDao {
-    @Query("SELECT * FROM movies_table ORDER BY id ASC")
-    fun getAllDbMovies(): LiveData<List<Movie>>
 
-    @Query("SELECT * FROM movies_table WHERE id = :passedId")
-    fun getMovie(passedId: Int): Movie
+    @Insert(onConflict = REPLACE)
+    suspend fun savePosts(movies: List<Movie>)
+
+    @Query("SELECT * FROM movies_table")
+    fun getPosts(): PagingSource<Int, Movie>
 
     @Query("SELECT COUNT(*) FROM movies_table")
     fun getDbCount(): Int

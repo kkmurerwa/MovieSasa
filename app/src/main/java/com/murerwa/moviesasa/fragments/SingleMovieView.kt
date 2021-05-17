@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.chip.Chip
 import com.murerwa.moviesasa.R
 import com.murerwa.moviesasa.adapters.CastListAdapter
-import com.murerwa.moviesasa.adapters.MovieAdapter
+//import com.murerwa.moviesasa.adapters.MovieAdapter
 import com.murerwa.moviesasa.databinding.FragmentSingleMovieViewBinding
 import com.murerwa.moviesasa.models.Cast
 import com.murerwa.moviesasa.models.Movie

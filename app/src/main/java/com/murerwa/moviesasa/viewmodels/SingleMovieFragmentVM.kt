@@ -12,14 +12,6 @@ class SingleMovieFragmentVM(application: Application) : AndroidViewModel(applica
         return AppRepository(getApplication()).getAllMovieGenres()
     }
 
-    fun getGenre(id: Int) : LiveData<Genre> {
-        return AppRepository(getApplication()).getGenre(id)
-    }
-
-    fun insertAllGenres(genreList: List<Genre>) {
-        AppRepository(getApplication()).insertAllGenres(genreList)
-    }
-
     fun getMovieCast(filmId: String) : LiveData<List<Cast>> {
         return AppRepository(getApplication()).getFilmCast(filmId)
     }
