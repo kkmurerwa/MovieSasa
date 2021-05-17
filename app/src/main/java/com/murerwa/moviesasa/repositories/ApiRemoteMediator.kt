@@ -51,8 +51,6 @@ class ApiRemoteMediator(
         } catch (exception: HttpException) {
             MediatorResult.Error(exception)
         }
-
-
     }
 
     private suspend fun getApiKeys(): ApiKeys? {

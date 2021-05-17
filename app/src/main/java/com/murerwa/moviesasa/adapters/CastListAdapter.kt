@@ -39,44 +39,30 @@ class CastListAdapter : RecyclerView.Adapter<CastListAdapter.ViewHolder>() {
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentCast = castList[position]
-        holder.bindCast(currentCast, position, castList)
+        holder.bindCast(castList[position])
     }
 
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private var view: View = v
-
         private lateinit var currentCast : Cast
+        private val binding = ListItemCastMemberBinding.bind(view)
 
-        private var _binding: ListItemCastMemberBinding? = null
-
-        private val binding get() = _binding!!
-
-        init {
-            v.setOnClickListener(this)
-            _binding = ListItemCastMemberBinding.bind(view)
-        }
-
-        override fun onClick(v: View) {
-
-        }
-
-        fun bindCast(castItem: Cast, position: Int, castList: List<Cast>) {
+        fun bindCast(castItem: Cast) {
             this.currentCast = castItem
 
             binding.tvCastRealName.text = castItem.name
             binding.tvCastCharacter.text = "as ${castItem.character}"
-//            binding.tvMovieTitle.text = movieItem.title
-//            binding.tvMovieDesc.text = movieItem.overview
-//            binding.rbMovieRating.rating = Config().ratingConverter(movieItem.vote_average)
-//
+
+            // Create spinner drawable for the glide placeholder
             val progressDrawable = CircularProgressDrawable(binding.root.context)
             progressDrawable.strokeWidth = 5f
             progressDrawable.centerRadius = 30f
             progressDrawable.start()
 
+            // Create a custom load error placeholder for glide based on gender
             val customDrawable = if (castItem.gender == 2) R.drawable.ic_profile_male else R.drawable.ic_profile_female
 
+            // Load images with glide
             Glide.with(itemView)
                 .load("https://image.tmdb.org/t/p/w500/${castItem.profile_path}")
                 .placeholder(progressDrawable)

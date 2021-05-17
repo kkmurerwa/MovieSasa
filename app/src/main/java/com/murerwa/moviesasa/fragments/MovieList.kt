@@ -12,6 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
+import androidx.paging.filter
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
@@ -37,7 +40,7 @@ class MovieList : Fragment() {
     private lateinit var btnClearSearchText: ImageButton
     private lateinit var btnOpenDrawerMenu: ImageButton
 
-    private var mMovieList: MutableList<Movie> = ArrayList()
+    private lateinit var mMovieList: PagingData<Movie>
 
     private lateinit var movieListAdapter: MovieListAdapter
 
@@ -56,22 +59,32 @@ class MovieList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupViews()
+
+        fetchPosts()
+
+//        observeDb()
+
+        setUpSearch()
+    }
+
+    private fun setupViews() {
         viewModel = ViewModelProvider(requireActivity()).get(MovieListFragmentVM::class.java)
 
         movieListAdapter = MovieListAdapter { movie: Movie -> navigateToSingleView(movie)}
+
+        rvMovieList = binding.rvAllShows
+
+        rvMovieList.adapter = movieListAdapter
 
         searchView = binding.mainToolbar.searchView
         btnClearSearchText = binding.mainToolbar.imbClearText
         btnOpenDrawerMenu = binding.mainToolbar.imbDisplayDrawer
 
-        rvMovieList = binding.rvAllShows
-
         val layoutManager = LinearLayoutManager(context)
         rvMovieList.layoutManager = layoutManager
 
-        binding.mainToolbar.imbClearText.setOnClickListener {
-            searchView.setText("")
-        }
+        binding.mainToolbar.imbClearText.setOnClickListener { searchView.setText("") }
 
         rvMovieList.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -81,14 +94,16 @@ class MovieList : Fragment() {
                 }
             }
         })
+    }
 
-        setupViews()
+    private fun fetchPosts() {
+        lifecycleScope.launch {
+            movieListFragmentVM.fetchPosts().collectLatest { pagingData ->
+                mMovieList = pagingData
 
-        fetchPosts()
-
-//        observeDb()
-
-//        setUpSearch()
+                movieListAdapter.submitData(mMovieList)
+            }
+        }
     }
 
     private fun setUpSearch() {
@@ -98,55 +113,23 @@ class MovieList : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s!!.isNotEmpty()) {
-                    binding.mainToolbar.imbClearText.visibility = View.VISIBLE
+                binding.mainToolbar.imbClearText.visibility = if (s!!.isEmpty()) View.GONE else View.VISIBLE
 
-                    val searchString = binding.mainToolbar.searchView.text.toString()
+                if (s.isNotEmpty()) {
+                    val searchString = s.toString().toLowerCase()
 
-                    val tempMutableList: MutableList<Movie> = ArrayList()
-
-                    mMovieList.forEach {
-                        if (it.title.toLowerCase().contains(searchString.toLowerCase())){
-                            tempMutableList.add(it)
-                        }
+                    val tempMutableList = mMovieList.filter {
+                        (it.title.toLowerCase().contains(searchString))
                     }
 
-//                    movieAdapter.setList(tempMutableList as ArrayList<Movie>)
-//
-//                    movieAdapter.notifyDataSetChanged()
+                    lifecycleScope.launch {
+                        movieListAdapter.submitData(tempMutableList)
+                    }
                 } else {
-                    binding.mainToolbar.imbClearText.visibility = View.GONE
-
-//                    movieAdapter.setList(mMovieList as ArrayList<Movie>)
-//
-//                    movieAdapter.notifyDataSetChanged()
+                    fetchPosts()
                 }
             }
         })
-
-
-//        binding.mainToolbar.searchView.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
-//
-//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                removeFocus()
-//                val searchString = binding.mainToolbar.searchView.text.toString()
-//
-//                var tempMutableList: MutableList<Movie> = ArrayList()
-//
-//                mMovieList.forEach {
-//                    if (it.title.contains(searchString)){
-//                       tempMutableList.add(it)
-//                    }
-//                }
-//
-//                movieAdapter.setList(tempMutableList as ArrayList<Movie>)
-//
-//                movieAdapter.notifyDataSetChanged()
-//
-//                return@OnEditorActionListener true
-//            }
-//            false
-//        })
     }
 
     private fun navigateToSingleView (movie: Movie) {
@@ -161,20 +144,6 @@ class MovieList : Fragment() {
     private fun removeFocus() {
         hideSoftKeyboard()
         binding.mainToolbar.searchView.clearFocus()
-    }
-
-    private fun setupViews() {
-        rvMovieList.adapter = movieListAdapter
-    }
-
-    private fun fetchPosts() {
-        lifecycleScope.launch {
-            movieListFragmentVM.fetchPosts().collectLatest { pagingData ->
-
-                Log.d("PAGING", pagingData.toString())
-                movieListAdapter.submitData(pagingData)
-            }
-        }
     }
 
     override fun onDestroyView() {

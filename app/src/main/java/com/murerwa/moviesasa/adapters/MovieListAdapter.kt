@@ -48,11 +48,13 @@ class MovieListAdapter(private val movieCardClicked: (Movie) -> Unit) :
                 binding.tvMovieDesc.text = overview
                 binding.rbMovieRating.rating = Config().ratingConverter(vote_average)
 
+                // Create spinner drawable for the glide placeholder
                 val progressDrawable = CircularProgressDrawable(binding.root.context)
                 progressDrawable.strokeWidth = 5f
                 progressDrawable.centerRadius = 30f
                 progressDrawable.start()
 
+                // Load images with glide
                 Glide.with(itemView)
                     .load("https://image.tmdb.org/t/p/w500/${poster_path}")
                     .placeholder(progressDrawable)
