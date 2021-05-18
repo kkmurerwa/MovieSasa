@@ -15,4 +15,7 @@ interface ApiKeysDao {
     @Query("SELECT * FROM api_keys ORDER BY id DESC")
     suspend fun getApiKeys(): List<ApiKeys>
 
+    @Query("DELETE FROM api_keys")
+    suspend fun clearApiKeys()
+
 }

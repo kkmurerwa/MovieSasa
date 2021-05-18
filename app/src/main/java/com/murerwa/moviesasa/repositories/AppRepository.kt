@@ -35,15 +35,15 @@ class AppRepository(context: Context) {
 
 
     @OptIn(ExperimentalPagingApi::class)
-    fun fetchPosts(): Flow<PagingData<Movie>> {
+    fun getMovies(): Flow<PagingData<Movie>> {
         return Pager(
             PagingConfig(
-                pageSize = 40,
-                enablePlaceholders = false,
-                prefetchDistance = 3),
+                pageSize = 25,
+                enablePlaceholders = false
+            ),
             remoteMediator = ApiRemoteMediator(apiService, appDatabase),
-
-            pagingSourceFactory = { appDatabase.movieDao.getPosts() }
+//            pagingSourceFactory = { appDatabase.movieDao.getPosts() }
+            pagingSourceFactory = { ApiPagingSource(apiService, appDatabase) }
         ).flow
     }
 

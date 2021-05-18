@@ -1,9 +1,6 @@
 package com.murerwa.moviesasa.repositories
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.LoadType
-import androidx.paging.PagingState
-import androidx.paging.RemoteMediator
+import androidx.paging.*
 import androidx.room.withTransaction
 import com.murerwa.moviesasa.models.ApiKeys
 import com.murerwa.moviesasa.models.Movie
@@ -17,35 +14,39 @@ class ApiRemoteMediator(
     private val apiService: ApiService,
     private val appDatabase: AppDatabase
 ) : RemoteMediator<Int, Movie>() {
+    private var page = 1
+
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, Movie>
+        state: PagingState<Int, Movie>,
     ): MediatorResult {
         return try {
-            val loadKey = when (loadType) {
-                LoadType.REFRESH -> null
-                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-                LoadType.APPEND -> {
-                    state.lastItemOrNull()
-                        ?: return MediatorResult.Success(endOfPaginationReached = true)
-                    getApiKeys()
-                }
-            }
 
-            val response = apiService.fetchPosts(
-                /*page = state.config.pageSize*/
-            )
-            val listing = response.body()?.moviesLists
+//            if (loadType == LoadType.REFRESH) {
+//                appDatabase.apiKeysDao.clearApiKeys()
+//                appDatabase.movieDao.clearMovies()
+//            }
+
+            val response = apiService.getMovies(
+                page = page,
+            ).body()
+            val listing = response?.moviesLists
             val movies = listing?.map { it }
             if (movies != null) {
-                // 3
+                val after = if (response.page == 500) null else page + 1
+
+                page = after!!
                 appDatabase.withTransaction {
                     appDatabase.apiKeysDao
-                        .saveApiKeys(ApiKeys(0, "0", "0"))
+                        .saveApiKeys(ApiKeys(
+                            0,
+                            after,
+                            if (page == 1) 0 else page - 1)
+                        )
                     appDatabase.movieDao.savePosts(movies)
                 }
             }
-            MediatorResult.Success(endOfPaginationReached = true)
+            MediatorResult.Success(endOfPaginationReached = response?.page != 500)
         } catch (exception: IOException) {
             MediatorResult.Error(exception)
         } catch (exception: HttpException) {

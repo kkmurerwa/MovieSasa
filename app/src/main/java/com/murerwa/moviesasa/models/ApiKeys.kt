@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class ApiKeys(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val after: String?,
-    val before: String?
+    val after: Int?,
+    val before: Int?
 )

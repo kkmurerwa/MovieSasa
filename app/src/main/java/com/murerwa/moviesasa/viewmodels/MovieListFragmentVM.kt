@@ -13,6 +13,6 @@ class MovieListFragmentVM(application: Application) : AndroidViewModel(applicati
     private val movieRepo = AppRepository(application)
 
     fun fetchPosts(): Flow<PagingData<Movie>> {
-        return movieRepo.fetchPosts().cachedIn(viewModelScope)
+        return movieRepo.getMovies().cachedIn(viewModelScope)
     }
 }

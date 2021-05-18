@@ -11,8 +11,14 @@ interface MovieDao {
     @Insert(onConflict = REPLACE)
     suspend fun savePosts(movies: List<Movie>)
 
+    @Insert(onConflict = REPLACE)
+    suspend fun saveMovies(movies: List<Movie>)
+
     @Query("SELECT * FROM movies_table")
     fun getPosts(): PagingSource<Int, Movie>
+
+    @Query("SELECT * FROM movies_table")
+    fun getMovies(): List<Movie>
 
     @Query("SELECT COUNT(*) FROM movies_table")
     fun getDbCount(): Int
@@ -25,4 +31,7 @@ interface MovieDao {
 
     @Delete
     fun deleteMovie(movie: Movie)
+
+    @Query("DELETE FROM movies_table")
+    fun clearMovies()
 }

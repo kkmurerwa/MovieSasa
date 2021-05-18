@@ -3,7 +3,6 @@ package com.murerwa.moviesasa.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagingData
 import androidx.paging.filter
-import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
@@ -58,13 +56,8 @@ class MovieList : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupViews()
-
         fetchPosts()
-
-//        observeDb()
-
         setUpSearch()
     }
 
@@ -90,7 +83,7 @@ class MovieList : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 20) {
-                    removeFocus()
+                    removeSearchViewFocus()
                 }
             }
         })
@@ -140,19 +133,20 @@ class MovieList : Fragment() {
         findNavController().navigate(action)
     }
 
-    // Remove the focus from search view
-    private fun removeFocus() {
+    private fun removeSearchViewFocus() {
         hideSoftKeyboard()
+
+        // Remove the focus from search view
         binding.mainToolbar.searchView.clearFocus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        removeSearchViewFocus()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onPause() {
-        super.onPause()
-        removeFocus()
     }
 }
