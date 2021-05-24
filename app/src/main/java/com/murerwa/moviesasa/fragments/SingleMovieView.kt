@@ -117,7 +117,7 @@ class SingleMovieView : Fragment() {
     private fun fetchFilmCast() {
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.getMovieCast(movie.id.toString()).observe(viewLifecycleOwner, { castList ->
-                if (castList != null) {
+                if (castList != null && castList.isNotEmpty()) {
                     Log.d("CAST Fragment", castList.toString())
 
                     castAdapter.setList(castList as ArrayList<Cast>)

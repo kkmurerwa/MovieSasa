@@ -58,11 +58,12 @@ class AppRepository(context: Context) {
         return db.genreDao.getAllMovieGenres()
     }
 
-    private fun insertAllGenres(genreList: List<Genre>) {
-        genreList.forEach {
-            db.genreDao.insertGenre(it)
-        }
-    }
+//    private suspend fun insertAllGenres(genreList: List<Genre>) {
+//        db.genreDao.insertGenres(genreList)
+////        genreList.forEach {
+////
+////        }
+//    }
 
     private fun loadGenresFromApi() {
         GlobalScope.launch(Dispatchers.IO) {
@@ -72,13 +73,17 @@ class AppRepository(context: Context) {
                 .build()
                 .create(ApiRequests::class.java)
 
-            val response: Response<GenreListResponse> = api!!.getAllGenres().awaitResponse()
+            try {
+                val response: Response<GenreListResponse> = api!!.getAllGenres().awaitResponse()
 
-            if (response.isSuccessful) {
-                val data = response.body()!!
-                Log.d("DATA", data.toString())
+                if (response.isSuccessful) {
+                    val data = response.body()!!
+                    Log.d("DATA", data.toString())
 
-                insertAllGenres(data.genres)
+                    db.genreDao.insertGenres(data.genres)
+                }
+            } catch (exception: Exception) {
+                exception.printStackTrace()
             }
         }
     }
@@ -97,12 +102,15 @@ class AppRepository(context: Context) {
                 .build()
                 .create(ApiRequests::class.java)
 
-            val response: Response<CastApiResponse> = api!!.getFilmCast(filmId).awaitResponse()
+            try {
+                val response: Response<CastApiResponse> = api!!.getFilmCast(filmId).awaitResponse()
+                if (response.isSuccessful) {
+                    val data = response.body()!!
 
-            if (response.isSuccessful) {
-                val data = response.body()!!
-
-                _movieList.postValue(data.cast)
+                    _movieList.postValue(data.cast)
+                }
+            } catch (exception: Exception) {
+                _movieList.postValue(null)
             }
         }
     }

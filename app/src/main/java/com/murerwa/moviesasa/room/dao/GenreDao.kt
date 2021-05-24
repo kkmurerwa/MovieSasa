@@ -16,8 +16,11 @@ interface GenreDao {
     @Query("SELECT COUNT(*) FROM genres_table")
     fun getDbCount(): Int
 
-    @Insert
-    fun insertGenre(genre: Genre)
+//    @Insert
+//    fun insertGenre(genre: Genre)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGenres(genres: List<Genre>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateMovie(genre: Genre)
