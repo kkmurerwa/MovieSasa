@@ -39,11 +39,11 @@ class AppRepository(context: Context) {
         return Pager(
             PagingConfig(
                 pageSize = 25,
-                enablePlaceholders = false
+                enablePlaceholders = false,
+                prefetchDistance = 5
             ),
             remoteMediator = ApiRemoteMediator(apiService, appDatabase),
-//            pagingSourceFactory = { appDatabase.movieDao.getPosts() }
-            pagingSourceFactory = { ApiPagingSource(apiService, appDatabase) }
+            pagingSourceFactory = { appDatabase.movieDao.getMovies() }
         ).flow
     }
 

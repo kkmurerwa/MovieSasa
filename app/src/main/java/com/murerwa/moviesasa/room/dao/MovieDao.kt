@@ -7,26 +7,19 @@ import com.murerwa.moviesasa.models.Movie
 
 @Dao
 interface MovieDao {
-
-    @Insert(onConflict = REPLACE)
-    suspend fun savePosts(movies: List<Movie>)
-
     @Insert(onConflict = REPLACE)
     suspend fun saveMovies(movies: List<Movie>)
 
     @Query("SELECT * FROM movies_table")
-    fun getPosts(): PagingSource<Int, Movie>
-
-    @Query("SELECT * FROM movies_table")
-    fun getMovies(): List<Movie>
+    fun getMovies(): PagingSource<Int, Movie>
 
     @Query("SELECT COUNT(*) FROM movies_table")
     fun getDbCount(): Int
 
-    @Insert
+    @Insert(onConflict = REPLACE)
     fun insertMovie(movie: Movie)
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
+    @Update(onConflict = REPLACE)
     fun updateMovie(movie: Movie)
 
     @Delete
