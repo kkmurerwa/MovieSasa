@@ -14,6 +14,8 @@ class ApiRemoteMediator(
     private val apiService: ApiService,
     private val appDatabase: AppDatabase
 ) : RemoteMediator<Int, Movie>() {
+    private val STARTING_PAGE_INDEX: Int = 1
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, Movie>,
@@ -21,32 +23,38 @@ class ApiRemoteMediator(
         return try {
 
             val loadKey = when(loadType){
-                LoadType.REFRESH -> getApiKeys()
-                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+                LoadType.REFRESH -> return MediatorResult.Success(false)
+                LoadType.PREPEND -> return MediatorResult.Success(true)
                 LoadType.APPEND ->{
-                    state.lastItemOrNull()
-                        ?: return MediatorResult.Success(endOfPaginationReached = true)
                     getApiKeys()
                 }
             }
 
+            val page: Int = loadKey?.after ?: STARTING_PAGE_INDEX
+
             val response = apiService.getMovies(
-                page = loadKey?.after ?: 1,
+                page = page,
             ).body()
             val listing = response?.moviesLists
             val movies = listing?.map { it }
+
+            val endOfPaginationReached = loadKey?.after == null || response?.page == response?.total_pages
+
             if (movies != null) {
+                val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
+                val nextKey = if (endOfPaginationReached) null else page + 1
+
                 appDatabase.withTransaction {
                     appDatabase.apiKeysDao
                         .saveApiKeys(ApiKeys(
-                            0,
-                            response.page,
-                            null
+                            1,
+                            nextKey,
+                            prevKey
                         ))
                     appDatabase.movieDao.saveMovies(movies)
                 }
             }
-            MediatorResult.Success(endOfPaginationReached = response?.page == response?.total_pages)
+            MediatorResult.Success(endOfPaginationReached)
         } catch (exception: IOException) {
             MediatorResult.Error(exception)
         } catch (exception: HttpException) {
@@ -55,7 +63,7 @@ class ApiRemoteMediator(
     }
 
     private suspend fun getApiKeys(): ApiKeys? {
-        return appDatabase.apiKeysDao.getApiKeys().firstOrNull() /*?: ApiKeys(0, 1, 0)*/
+        return appDatabase.apiKeysDao.getApiKeys().firstOrNull()
     }
 
 }
