@@ -13,7 +13,7 @@ interface MovieDao {
     @Query("SELECT * FROM movies_table")
     fun getMovies(): PagingSource<Int, Movie>
 
-    @Query("SELECT COUNT(*) FROM movies_table")
+    @Query("SELECT COUNT(id) FROM movies_table")
     fun getDbCount(): Int
 
     @Insert(onConflict = REPLACE)

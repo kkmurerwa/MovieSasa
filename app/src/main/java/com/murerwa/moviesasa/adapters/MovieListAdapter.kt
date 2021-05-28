@@ -46,7 +46,9 @@ class MovieListAdapter(private val movieCardClicked: (Movie) -> Unit) :
             with(movie) {
                 binding.tvMovieTitle.text = title
                 binding.tvMovieDesc.text = overview
-                binding.rbMovieRating.rating = Config().ratingConverter(vote_average)
+               vote_average?.let {
+                   binding.rbMovieRating.rating = Config().ratingConverter(it)
+               }
 
                 // Create spinner drawable for the glide placeholder
                 val progressDrawable = CircularProgressDrawable(binding.root.context)

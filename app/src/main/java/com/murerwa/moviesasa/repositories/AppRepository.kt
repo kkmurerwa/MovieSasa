@@ -27,35 +27,36 @@ const val BASE_URL = "https://api.themoviedb.org"
 class AppRepository(context: Context) {
     private val apiService = ApiClient.getClient().create(ApiService::class.java)
 
-    private val appDatabase = AppDatabase.getInstance(context)
+     private val appDatabase = AppDatabase.getInstance(context)
 
-    private val db: AppDatabase = AppDatabase.getInstance(context)
+//    private val appDatabase: AppDatabase = AppDatabase.getInstance(context)
 
     private val _movieList: MutableLiveData<List<Cast>> = MutableLiveData<List<Cast>>()
 
+    private val pagingSource = { appDatabase.movieDao.getMovies() }
 
-    @OptIn(ExperimentalPagingApi::class)
+    @ExperimentalPagingApi
     fun getMovies(): Flow<PagingData<Movie>> {
         return Pager(
-            PagingConfig(
-                pageSize = 25,
+            config = PagingConfig(
+                pageSize = 1,
                 enablePlaceholders = false,
-                prefetchDistance = 5
+                prefetchDistance = 3
             ),
             remoteMediator = ApiRemoteMediator(apiService, appDatabase),
-            pagingSourceFactory = { appDatabase.movieDao.getMovies() }
+            pagingSourceFactory = pagingSource
         ).flow
     }
 
     fun getAllMovieGenres(): LiveData<List<Genre>> {
         // Check if db is empty on background thread
         GlobalScope.launch(Dispatchers.IO) {
-            if (db.genreDao.getDbCount() == 0) {
+            if (appDatabase.genreDao.getDbCount() == 0) {
                 loadGenresFromApi()
             }
         }
 
-        return db.genreDao.getAllMovieGenres()
+        return appDatabase.genreDao.getAllMovieGenres()
     }
 
 //    private suspend fun insertAllGenres(genreList: List<Genre>) {
@@ -80,7 +81,7 @@ class AppRepository(context: Context) {
                     val data = response.body()!!
                     Log.d("DATA", data.toString())
 
-                    db.genreDao.insertGenres(data.genres)
+                    appDatabase.genreDao.insertGenres(data.genres)
                 }
             } catch (exception: Exception) {
                 exception.printStackTrace()
@@ -113,6 +114,23 @@ class AppRepository(context: Context) {
                 _movieList.postValue(null)
             }
         }
+    }
+
+    companion object {
+
+        // For Singleton instantiation
+        @Volatile
+        private var instance: AppRepository? = null
+
+        fun getInstance(
+            context: Context
+        ) =
+            instance
+                ?: synchronized(this) {
+                    instance
+                        ?: AppRepository(context)
+                            .also { instance = it }
+                }
     }
 
 }

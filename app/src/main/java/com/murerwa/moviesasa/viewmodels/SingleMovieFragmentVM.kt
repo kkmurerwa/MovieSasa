@@ -8,11 +8,11 @@ import com.murerwa.moviesasa.models.Genre
 import com.murerwa.moviesasa.repositories.AppRepository
 
 class SingleMovieFragmentVM(application: Application) : AndroidViewModel(application) {
-    fun getGenreList () : LiveData<List<Genre>> {
-        return AppRepository(getApplication()).getAllMovieGenres()
+    fun getGenreList(): LiveData<List<Genre>> {
+        return AppRepository.getInstance(getApplication()).getAllMovieGenres()
     }
 
-    fun getMovieCast(filmId: String) : LiveData<List<Cast>> {
-        return AppRepository(getApplication()).getFilmCast(filmId)
+    fun getMovieCast(filmId: String): LiveData<List<Cast>> {
+        return AppRepository.getInstance(getApplication()).getFilmCast(filmId)
     }
 }

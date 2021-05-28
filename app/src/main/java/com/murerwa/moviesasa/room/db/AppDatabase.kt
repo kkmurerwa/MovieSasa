@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import com.murerwa.moviesasa.models.Genre
 import com.murerwa.moviesasa.models.Movie
 import com.murerwa.moviesasa.models.ApiKeys
+import com.murerwa.moviesasa.repositories.AppRepository
 import com.murerwa.moviesasa.room.dao.ApiKeysDao
 import com.murerwa.moviesasa.room.dao.GenreDao
 import com.murerwa.moviesasa.room.dao.MovieDao
@@ -14,7 +15,7 @@ import com.murerwa.moviesasa.room.dao.MovieDao
 
 @Database(
     entities = [Movie::class, Genre::class, ApiKeys::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -25,22 +26,24 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var INSTANCE: AppDatabase? = null
+        private var instance: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase {
             synchronized(this) {
-                var instance = INSTANCE
 
-                if (instance == null) {
+                return if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         AppDatabase::class.java,
-                        "app_database")
+                        "app_database"
+                    )
                         .fallbackToDestructiveMigration()
                         .build()
-                    INSTANCE = instance
+                    instance!!
+                } else {
+                    instance!!
                 }
-                return instance
+
             }
         }
     }

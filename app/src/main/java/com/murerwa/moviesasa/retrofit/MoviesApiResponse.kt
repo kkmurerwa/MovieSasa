@@ -1,5 +1,6 @@
 package com.murerwa.moviesasa.retrofit
 
+
 import com.google.gson.annotations.SerializedName
 import com.murerwa.moviesasa.models.Movie
 

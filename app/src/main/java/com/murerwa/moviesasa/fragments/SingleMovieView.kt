@@ -88,7 +88,7 @@ class SingleMovieView : Fragment() {
         // Populate text views
         binding.tvFullMovieDesc.text = movie.overview
         binding.tvRatingValue.text = "${movie.vote_average} / 10"
-        binding.rbMovieRating.rating = Config().ratingConverter(movie.vote_average)
+        binding.rbMovieRating.rating = Config().ratingConverter(movie.vote_average!!)
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }

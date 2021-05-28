@@ -9,8 +9,7 @@ class DiffUtilCallBack : DiffUtil.ItemCallback<Movie>() {
     }
 
     override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-        return oldItem.id == newItem.id
-                && oldItem.title == newItem.title
-                && oldItem.overview == newItem.overview
+        return oldItem == newItem
+
     }
 }

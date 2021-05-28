@@ -8,5 +8,6 @@ data class ApiKeys(
     @PrimaryKey(autoGenerate = false)
     val id: Int,
     val after: Int?,
-    val before: Int?
+    val before: Int?,
+    val isEndReached: Boolean
 )
