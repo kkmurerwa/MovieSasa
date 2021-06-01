@@ -15,8 +15,7 @@ interface ApiRequests {
 
     @GET("/3/movie/{id}/credits?api_key=${BuildConfig.API_KEY}&language=en-US")
     fun getFilmCast(
-        @Query("id") id: String,
-//        @Path("id") id: String
+        @Path("id") id: String
     ) : Call<CastApiResponse>
 
 }

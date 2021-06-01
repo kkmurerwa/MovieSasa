@@ -27,6 +27,8 @@ const val BASE_URL = "https://api.themoviedb.org"
 class AppRepository(context: Context) {
     private val apiService = ApiClient.getClient().create(ApiService::class.java)
 
+    val TAG = "APP REPOSITORY"
+
      private val appDatabase = AppDatabase.getInstance(context)
 
 //    private val appDatabase: AppDatabase = AppDatabase.getInstance(context)
@@ -59,13 +61,6 @@ class AppRepository(context: Context) {
 
         return appDatabase.genreDao.getAllMovieGenres()
     }
-
-//    private suspend fun insertAllGenres(genreList: List<Genre>) {
-//        db.genreDao.insertGenres(genreList)
-////        genreList.forEach {
-////
-////        }
-//    }
 
     private fun loadGenresFromApi() {
         GlobalScope.launch(Dispatchers.IO) {
@@ -105,33 +100,33 @@ class AppRepository(context: Context) {
                 .create(ApiRequests::class.java)
 
             try {
-                val response: Response<CastApiResponse> = api!!.getFilmCast(filmId).awaitResponse()
+                val response: Response<CastApiResponse> = api!!.getFilmCast(id = filmId).awaitResponse()
                 if (response.isSuccessful) {
                     val data = response.body()!!
 
                     _movieList.postValue(data.cast)
+
+                    Log.d(TAG, "Successfully loaded cast")
+                } else {
+                    _movieList.postValue(null)
+                    Log.d(TAG, "API did not return any results")
                 }
             } catch (exception: Exception) {
                 _movieList.postValue(null)
+                Log.d(TAG, "Could not load cast")
             }
         }
     }
 
     companion object {
-
         // For Singleton instantiation
         @Volatile
         private var instance: AppRepository? = null
 
-        fun getInstance(
-            context: Context
-        ) =
-            instance
-                ?: synchronized(this) {
-                    instance
-                        ?: AppRepository(context)
-                            .also { instance = it }
-                }
+        fun getInstance(context: Context) = instance ?:
+            synchronized(this) {
+                instance ?: AppRepository(context).also { instance = it }
+            }
     }
 
 }

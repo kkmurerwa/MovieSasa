@@ -28,6 +28,8 @@ import kotlinx.coroutines.launch
 
 
 class SingleMovieView : Fragment() {
+    val TAG = "SINGLE MOVIE VIEW FRAGMENT"
+
     private var _binding: FragmentSingleMovieViewBinding? = null
 
     private val args: SingleMovieViewArgs by navArgs()
@@ -115,10 +117,12 @@ class SingleMovieView : Fragment() {
     }
 
     private fun fetchFilmCast() {
+        Log.d(TAG, "Fetch Film Cast Called")
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewModel.getMovieCast(movie.id.toString()).observe(viewLifecycleOwner, { castList ->
+                Log.d(TAG, "VM Returned a result")
                 if (castList != null && castList.isNotEmpty()) {
-                    Log.d("CAST Fragment", castList.toString())
+                    Log.d(TAG, castList.toString())
 
                     castAdapter.setList(castList as ArrayList<Cast>)
                     context?.let {context -> castAdapter.setContext(context) }
