@@ -13,9 +13,11 @@ import com.murerwa.moviesasa.databinding.ListItemMovieBinding
 import com.murerwa.moviesasa.models.Movie
 import com.murerwa.moviesasa.utils.Config
 import com.murerwa.moviesasa.utils.DiffUtilCallBack
+import com.murerwa.moviesasa.utils.blockingClickListener
 
 class MovieListAdapter(private val movieCardClicked: (Movie) -> Unit) :
     PagingDataAdapter<Movie, MovieListAdapter.MovieViewHolder>(DiffUtilCallBack()) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_movie, parent, false)
         return MovieViewHolder(view, movieCardClicked)
@@ -36,6 +38,8 @@ class MovieListAdapter(private val movieCardClicked: (Movie) -> Unit) :
         override fun onClick(v: View?) {
             // navigate to next item when clicked
             movieItemClicked.invoke(currentMovie)
+//
+//            v?.blockingClickListener(action = movieItemClicked, movie = currentMovie)
         }
 
         fun bindPost(movie: Movie) {

@@ -1,8 +1,10 @@
 package com.murerwa.moviesasa.fragments
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,14 +25,14 @@ import com.murerwa.moviesasa.databinding.FragmentMovieListBinding
 import com.murerwa.moviesasa.models.Movie
 import com.murerwa.moviesasa.utils.hideSoftKeyboard
 import com.murerwa.moviesasa.viewmodels.MovieListFragmentVM
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @ExperimentalPagingApi
 class MovieList : Fragment() {
     private var _binding: FragmentMovieListBinding? = null
+
+    private val TAG = "MOVIELIST FRAGMENT"
 
     private val binding get() = _binding!!
 
@@ -44,6 +46,8 @@ class MovieList : Fragment() {
     private lateinit var btnOpenDrawerMenu: ImageButton
 
     private lateinit var mMovieList: PagingData<Movie>
+
+    var lastClickTime: Long? = null
 
     private val movieListAdapter = MovieListAdapter { movie: Movie -> navigateToSingleView(movie) }
 
@@ -120,10 +124,10 @@ class MovieList : Fragment() {
                     if (s!!.isEmpty()) View.GONE else View.VISIBLE
 
                 if (s.isNotEmpty()) {
-                    val searchString = s.toString().toLowerCase()
+                    val searchString = s.toString().lowercase()
 
                     val tempMutableList = mMovieList.filter {
-                        (it.title!!.toLowerCase().contains(searchString))
+                        (it.title!!.lowercase().contains(searchString))
                     }
 
                     lifecycleScope.launch {
@@ -137,6 +141,24 @@ class MovieList : Fragment() {
     }
 
     private fun navigateToSingleView(movie: Movie) {
+        val debounceTime = 1200L
+
+        if (lastClickTime == null) {
+            performNavigation(movie)
+        } else {
+            val timeNow = SystemClock.elapsedRealtime()
+            val elapsedTimeSinceLastClick = timeNow - lastClickTime!!
+
+            if (elapsedTimeSinceLastClick >= debounceTime) {
+                Log.d(TAG, "Click happened")
+                performNavigation(movie)
+            }
+        }
+
+        lastClickTime = SystemClock.elapsedRealtime()
+    }
+
+    private fun performNavigation(movie: Movie) {
         // Navigate with safe-args
         val action = MovieListDirections.actionMovieListFragmentToMovieViewFragment(movie)
 
