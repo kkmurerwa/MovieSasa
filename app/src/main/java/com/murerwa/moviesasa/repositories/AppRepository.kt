@@ -33,7 +33,8 @@ class AppRepository(context: Context) {
 
     private val _movieList: MutableLiveData<List<Cast>> = MutableLiveData<List<Cast>>()
 
-    private val pagingSource = { appDatabase.movieDao.getMovies() }
+//    private val pagingSource = { appDatabase.movieDao.getMovies() }
+    private val pagingSource = { ApiPagingSource(apiService, appDatabase) }
 
     @ExperimentalPagingApi
     fun getMovies(): Flow<PagingData<Movie>> {

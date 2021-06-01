@@ -26,17 +26,11 @@ class ApiRemoteMediator(
             LoadType.REFRESH -> {
                 withContext(Dispatchers.IO) {
                     when (appDatabase.movieDao.getDbCount() > 0) {
-                        true -> return@withContext MediatorResult.Success(
-                            false
-                        )
-                        else -> {/*do nothing*/
-                        }
-
+                        true -> return@withContext MediatorResult.Success(false)
+                        else -> {}
                     }
-
                 }
                 null
-
             }
             LoadType.PREPEND -> return MediatorResult.Success(true)
             LoadType.APPEND -> {
