@@ -46,7 +46,6 @@ class MovieList : Fragment() {
     private lateinit var mMovieList: PagingData<Movie>
 
     private val movieListAdapter = MovieListAdapter { movie: Movie -> navigateToSingleView(movie) }
-    private var job: Job? = null
 
     private val movieListFragmentVM: MovieListFragmentVM by lazy {
         ViewModelProvider(this).get(MovieListFragmentVM::class.java)
@@ -65,7 +64,7 @@ class MovieList : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         fetchPosts()
-        //setUpSearch()
+        setUpSearch()
     }
 
     private fun setupViews() {
@@ -89,14 +88,14 @@ class MovieList : Fragment() {
 
         binding.mainToolbar.imbClearText.setOnClickListener { searchView.setText("") }
 
-//        rvMovieList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                if (dy > 20) {
-//                   // removeSearchViewFocus()
-//                }
-//            }
-//        })
+        rvMovieList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 20) {
+                   // removeSearchViewFocus()
+                }
+            }
+        })
     }
 
     @ExperimentalPagingApi
@@ -110,32 +109,32 @@ class MovieList : Fragment() {
         }
     }
 
-//    private fun setUpSearch() {
-//        binding.mainToolbar.searchView.addTextChangedListener(object : TextWatcher {
-//            override fun afterTextChanged(s: Editable?) {}
-//
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//                binding.mainToolbar.imbClearText.visibility =
-//                    if (s!!.isEmpty()) View.GONE else View.VISIBLE
-//
-//                if (s.isNotEmpty()) {
-//                    val searchString = s.toString().toLowerCase()
-//
-//                    val tempMutableList = mMovieList.filter {
-//                        (it.title!!.toLowerCase().contains(searchString))
-//                    }
-//
-//                    lifecycleScope.launch {
-//                          movieListAdapter.submitData(tempMutableList)
-//                    }
-//                } else {
-//                    fetchPosts()
-//                }
-//            }
-//        })
-//    }
+    private fun setUpSearch() {
+        binding.mainToolbar.searchView.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                binding.mainToolbar.imbClearText.visibility =
+                    if (s!!.isEmpty()) View.GONE else View.VISIBLE
+
+                if (s.isNotEmpty()) {
+                    val searchString = s.toString().toLowerCase()
+
+                    val tempMutableList = mMovieList.filter {
+                        (it.title!!.toLowerCase().contains(searchString))
+                    }
+
+                    lifecycleScope.launch {
+                          movieListAdapter.submitData(tempMutableList)
+                    }
+                } else {
+                    fetchPosts()
+                }
+            }
+        })
+    }
 
     private fun navigateToSingleView(movie: Movie) {
         // Navigate with safe-args
