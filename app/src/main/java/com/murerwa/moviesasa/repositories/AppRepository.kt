@@ -25,7 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 const val BASE_URL = "https://api.themoviedb.org"
 
 class AppRepository(context: Context) {
-    private val apiService = ApiClient.getClient().create(ApiService::class.java)
+    private val apiService = ApiClient.getClient(context).create(ApiService::class.java)
 
     val TAG = "APP REPOSITORY"
 

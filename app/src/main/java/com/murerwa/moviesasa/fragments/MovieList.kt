@@ -92,7 +92,7 @@ class MovieList : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 20) {
-                   // removeSearchViewFocus()
+                    removeSearchViewFocus()
                 }
             }
         })
@@ -153,7 +153,7 @@ class MovieList : Fragment() {
 
     override fun onPause() {
         super.onPause()
-       // removeSearchViewFocus()
+        removeSearchViewFocus()
     }
 
     override fun onDestroyView() {

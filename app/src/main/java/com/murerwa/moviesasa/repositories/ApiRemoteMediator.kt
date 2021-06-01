@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 @ExperimentalPagingApi
 class ApiRemoteMediator(
@@ -22,23 +23,34 @@ class ApiRemoteMediator(
         loadType: LoadType,
         state: PagingState<Int, Movie>,
     ): MediatorResult {
-        val loadKey = when (loadType) {
-            LoadType.REFRESH -> {
-                withContext(Dispatchers.IO) {
-                    when (appDatabase.movieDao.getDbCount() > 0) {
-                        true -> return@withContext MediatorResult.Success(false)
-                        else -> {}
-                    }
-                }
-                null
-            }
-            LoadType.PREPEND -> return MediatorResult.Success(true)
-            LoadType.APPEND -> {
-                getApiKeys()
-            }
-        }
+        val apiKeysDao = appDatabase.apiKeysDao
+
+//        val loadKey = when (loadType) {
+//            LoadType.REFRESH -> {
+//                withContext(Dispatchers.IO) {
+//                    when (appDatabase.movieDao.getDbCount() > 0) {
+//                        true -> return@withContext MediatorResult.Success(false)
+//                        else -> {}
+//                    }
+//                }
+//                null
+//            }
+//            LoadType.PREPEND -> return MediatorResult.Success(true)
+//            LoadType.APPEND -> {
+//                getApiKeys()
+//            }
+//        }
 
         try {
+            val loadKey = when (loadType) {
+                LoadType.REFRESH -> null
+                LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+                LoadType.APPEND -> {
+                    val lastItem = apiKeysDao.getApiKeys().lastOrNull()
+                        ?: return MediatorResult.Success(endOfPaginationReached = true)
+                    lastItem
+                }
+            }
 
             if (loadKey != null) {
                 if (loadKey.isEndReached) return MediatorResult.Success(endOfPaginationReached = true)
@@ -58,6 +70,11 @@ class ApiRemoteMediator(
             val nextKey = if (endOfPaginationReached) null else page + 1
 
             appDatabase.withTransaction {
+
+                if (loadType == LoadType.REFRESH) {
+                    apiKeysDao.clearApiKeys()
+                }
+
                 appDatabase.apiKeysDao
                     .saveApiKeys(
                         ApiKeys(
@@ -77,6 +94,18 @@ class ApiRemoteMediator(
             return MediatorResult.Error(exception)
         }
     }
+
+//    override suspend fun initialize(): InitializeAction {
+//        return InitializeAction.LAUNCH_INITIAL_REFRESH
+
+//        val cacheTimeout = TimeUnit.HOURS.convert(1, TimeUnit.MILLISECONDS)
+
+//        return if (System.currentTimeMillis() - db.lastUpdated() >= cacheTimeout) {
+//            InitializeAction.SKIP_INITIAL_REFRESH
+//        } else {
+//            InitializeAction.LAUNCH_INITIAL_REFRESH
+//        }
+//    }
 
     private suspend fun getApiKeys(): ApiKeys? {
         return appDatabase.apiKeysDao.getApiKeys().firstOrNull()
