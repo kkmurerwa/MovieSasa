@@ -1,6 +1,7 @@
 package com.murerwa.moviesasa.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,6 +63,8 @@ class CastListAdapter : RecyclerView.Adapter<CastListAdapter.ViewHolder>() {
             // Create a custom load error placeholder for glide based on gender
             val customDrawable = if (castItem.gender == 2) R.drawable.ic_profile_male else R.drawable.ic_profile_female
 
+
+            Log.d("URL", "https://image.tmdb.org/t/p/w500/${castItem.profile_path}")
             // Load images with glide
             Glide.with(itemView)
                 .load("https://image.tmdb.org/t/p/w500/${castItem.profile_path}")

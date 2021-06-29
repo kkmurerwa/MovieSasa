@@ -75,6 +75,8 @@ class SingleMovieView : Fragment() {
         progressDrawable.centerRadius = 30f
         progressDrawable.start()
 
+        Log.d("URL", "https://image.tmdb.org/t/p/w500/${movie.poster_path}")
+
         // Load image with glide
         Glide.with(requireContext())
             .load("https://image.tmdb.org/t/p/w500/${movie.poster_path}")
