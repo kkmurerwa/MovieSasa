@@ -27,11 +27,11 @@ class ApiPagingSource(
 
             val response = apiService.getMovies(page = page)
             val prevKey = if (page == 1) null else page - 1
-            val nextKey = if (response?.page == 500) null else page + 1
+            val nextKey = if (response.page == 500) null else page + 1
 
-            movies = response?.moviesLists
+            movies = response.moviesLists
 
-            if (movies?.size!! > 0) {
+            if (movies.isNotEmpty()) {
                 appDatabase.withTransaction {
                     appDatabase.movieDao.saveMovies(movies)
                 }

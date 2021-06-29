@@ -5,11 +5,10 @@ import com.murerwa.moviesasa.models.Movie
 
 class DiffUtilCallBack : DiffUtil.ItemCallback<Movie>() {
     override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-        return oldItem.id == newItem.id
+        return true
     }
 
     override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-        return oldItem == newItem
-
+        return true
     }
 }

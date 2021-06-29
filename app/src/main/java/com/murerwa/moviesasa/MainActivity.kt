@@ -18,10 +18,5 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
-
-//        val navController = findNavController(R.id.nav_host_fragment_container)
-//        val appBarConfiguration = AppBarConfiguration(navController.graph)
-//        findViewById<Toolbar>(R.id.toolbar_searchable)
-//            .setupWithNavController(navController, appBarConfiguration)
     }
 }

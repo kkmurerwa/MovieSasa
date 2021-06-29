@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 class MovieListFragmentVM(application: Application) : AndroidViewModel(application) {
     private val movieRepo = AppRepository.getInstance(application)
 
-    @ExperimentalPagingApi
     fun fetchPosts(): Flow<PagingData<Movie>> {
         return movieRepo.getMovies().cachedIn(viewModelScope)
     }

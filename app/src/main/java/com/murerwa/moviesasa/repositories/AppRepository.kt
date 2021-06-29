@@ -29,16 +29,15 @@ class AppRepository(context: Context) {
 
     val TAG = "APP REPOSITORY"
 
-     private val appDatabase = AppDatabase.getInstance(context)
+    private val appDatabase = AppDatabase.getInstance(context)
 
 //    private val appDatabase: AppDatabase = AppDatabase.getInstance(context)
 
     private val _movieList: MutableLiveData<List<Cast>> = MutableLiveData<List<Cast>>()
 
-//    private val pagingSource = { appDatabase.movieDao.getMovies() }
+    //    private val pagingSource = { appDatabase.movieDao.getMovies() }
     private val pagingSource = { ApiPagingSource(apiService, appDatabase) }
 
-    @ExperimentalPagingApi
     fun getMovies(): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
@@ -46,7 +45,7 @@ class AppRepository(context: Context) {
                 enablePlaceholders = false,
                 prefetchDistance = 3
             ),
-            remoteMediator = ApiRemoteMediator(apiService, appDatabase),
+//            remoteMediator = ApiRemoteMediator(apiService, appDatabase),
             pagingSourceFactory = pagingSource
         ).flow
     }
@@ -124,9 +123,9 @@ class AppRepository(context: Context) {
         private var instance: AppRepository? = null
 
         fun getInstance(context: Context) = instance ?:
-            synchronized(this) {
-                instance ?: AppRepository(context).also { instance = it }
-            }
+        synchronized(this) {
+            instance ?: AppRepository(context).also { instance = it }
+        }
     }
 
 }

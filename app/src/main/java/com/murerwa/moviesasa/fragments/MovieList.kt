@@ -1,5 +1,6 @@
 package com.murerwa.moviesasa.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.Editable
@@ -20,15 +21,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.murerwa.moviesasa.adapters.MovieListAdapter
-import com.murerwa.moviesasa.adapters.PlayersLoadingStateAdapter
 import com.murerwa.moviesasa.databinding.FragmentMovieListBinding
 import com.murerwa.moviesasa.models.Movie
 import com.murerwa.moviesasa.utils.hideSoftKeyboard
 import com.murerwa.moviesasa.viewmodels.MovieListFragmentVM
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-@ExperimentalPagingApi
 class MovieList : Fragment() {
     private var _binding: FragmentMovieListBinding? = null
 
@@ -60,15 +61,20 @@ class MovieList : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMovieListBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
-    @ExperimentalPagingApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
-        fetchPosts()
+//        fetchPosts()
         setUpSearch()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fetchPosts()
     }
 
     private fun setupViews() {
@@ -80,15 +86,11 @@ class MovieList : Fragment() {
         rvMovieList.layoutManager = layoutManager
         rvMovieList.setHasFixedSize(true)
 
-        rvMovieList.adapter = movieListAdapter.withLoadStateFooter(
-            footer = PlayersLoadingStateAdapter { movieListAdapter.retry() }
-        )
+        rvMovieList.adapter = movieListAdapter
 
         searchView = binding.mainToolbar.searchView
         btnClearSearchText = binding.mainToolbar.imbClearText
         btnOpenDrawerMenu = binding.mainToolbar.imbDisplayDrawer
-
-
 
         binding.mainToolbar.imbClearText.setOnClickListener { searchView.setText("") }
 
@@ -102,11 +104,9 @@ class MovieList : Fragment() {
         })
     }
 
-    @ExperimentalPagingApi
     private fun fetchPosts() {
         lifecycleScope.launch {
-            movieListFragmentVM.fetchPosts().collectLatest { pagingData ->
-                //Will it work really with search?
+            movieListFragmentVM.fetchPosts().collect { pagingData ->
                 mMovieList = pagingData
                 movieListAdapter.submitData(pagingData)
             }
@@ -123,19 +123,7 @@ class MovieList : Fragment() {
                 binding.mainToolbar.imbClearText.visibility =
                     if (s!!.isEmpty()) View.GONE else View.VISIBLE
 
-                if (s.isNotEmpty()) {
-                    val searchString = s.toString().lowercase()
-
-                    val tempMutableList = mMovieList.filter {
-                        (it.title!!.lowercase().contains(searchString))
-                    }
-
-                    lifecycleScope.launch {
-                          movieListAdapter.submitData(tempMutableList)
-                    }
-                } else {
-                    fetchPosts()
-                }
+                // TODO:Add code to filter movies
             }
         })
     }

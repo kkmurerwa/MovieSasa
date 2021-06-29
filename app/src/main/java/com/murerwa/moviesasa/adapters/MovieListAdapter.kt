@@ -13,7 +13,6 @@ import com.murerwa.moviesasa.databinding.ListItemMovieBinding
 import com.murerwa.moviesasa.models.Movie
 import com.murerwa.moviesasa.utils.Config
 import com.murerwa.moviesasa.utils.DiffUtilCallBack
-import com.murerwa.moviesasa.utils.blockingClickListener
 
 class MovieListAdapter(private val movieCardClicked: (Movie) -> Unit) :
     PagingDataAdapter<Movie, MovieListAdapter.MovieViewHolder>(DiffUtilCallBack()) {
@@ -38,8 +37,6 @@ class MovieListAdapter(private val movieCardClicked: (Movie) -> Unit) :
         override fun onClick(v: View?) {
             // navigate to next item when clicked
             movieItemClicked.invoke(currentMovie)
-//
-//            v?.blockingClickListener(action = movieItemClicked, movie = currentMovie)
         }
 
         fun bindPost(movie: Movie) {
@@ -50,9 +47,7 @@ class MovieListAdapter(private val movieCardClicked: (Movie) -> Unit) :
             with(movie) {
                 binding.tvMovieTitle.text = title
                 binding.tvMovieDesc.text = overview
-               vote_average?.let {
-                   binding.rbMovieRating.rating = Config().ratingConverter(it)
-               }
+                binding.rbMovieRating.rating = vote_average?.let { Config().ratingConverter(it) }!!
 
                 // Create spinner drawable for the glide placeholder
                 val progressDrawable = CircularProgressDrawable(binding.root.context)
