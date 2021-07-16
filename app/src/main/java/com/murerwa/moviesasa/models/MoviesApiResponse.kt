@@ -1,4 +1,4 @@
-package com.murerwa.moviesasa.retrofit
+package com.murerwa.moviesasa.models
 
 
 import com.google.gson.annotations.SerializedName

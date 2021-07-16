@@ -74,6 +74,8 @@ class MovieList : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        // Solves bug for jumping list
         fetchPosts()
     }
 

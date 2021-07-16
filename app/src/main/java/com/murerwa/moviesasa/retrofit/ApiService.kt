@@ -1,7 +1,7 @@
 package com.murerwa.moviesasa.retrofit
 
 import com.murerwa.moviesasa.BuildConfig
-import retrofit2.Call
+import com.murerwa.moviesasa.models.MoviesApiResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

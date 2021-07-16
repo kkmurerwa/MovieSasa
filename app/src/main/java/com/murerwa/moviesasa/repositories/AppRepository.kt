@@ -4,13 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.murerwa.moviesasa.models.Cast
-import com.murerwa.moviesasa.models.Genre
-import com.murerwa.moviesasa.models.Movie
+import com.murerwa.moviesasa.models.*
 import com.murerwa.moviesasa.retrofit.*
 import com.murerwa.moviesasa.room.db.AppDatabase
 import kotlinx.coroutines.Dispatchers

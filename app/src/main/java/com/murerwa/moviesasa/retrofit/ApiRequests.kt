@@ -1,10 +1,12 @@
 package com.murerwa.moviesasa.retrofit
 
 import com.murerwa.moviesasa.BuildConfig
+import com.murerwa.moviesasa.models.CastApiResponse
+import com.murerwa.moviesasa.models.GenreListResponse
+import com.murerwa.moviesasa.models.MoviesApiResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface ApiRequests {
     @GET("/3/movie/popular?api_key=${BuildConfig.API_KEY}&language=en-US&page=1")
